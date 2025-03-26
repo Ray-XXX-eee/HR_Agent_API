@@ -1,0 +1,23 @@
+python-dotenv
+langchain.core==0.3.33
+langchain-community==0.3.16 
+langchain-text-splitters
+google-generativeai
+streamlit
+groq
+langchain-groq
+langchain_google_genai
+faiss-cpu
+pinecone
+python-docx
+pypdf
+python-multipart
+
+#extra 
+# langchain-huggingface
+# llama-index
+# llama-index-readers-web
+# llama-index-llms-gemini
+# IPython
+# llama-index-embeddings-gemini
+# llama-index-llms-huggingface
