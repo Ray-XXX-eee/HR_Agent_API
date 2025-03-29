@@ -25,43 +25,41 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
           echo "Connected to EC2"
+          
+          # Install Git if not installed
+          if ! command -v git &> /dev/null; then
+            echo "Git not found. Installing Git..."
+            sudo yum install -y git || sudo apt-get install -y git
+          fi
 
-          # Install Docker if not present
+          # Install Docker if not installed
           if ! command -v docker &> /dev/null; then
             echo "Docker not found. Installing Docker..."
-            sudo apt-get update
-            sudo apt-get install -y docker.io
-            sudo systemctl enable docker
+            sudo yum install -y docker || sudo apt-get install -y docker.io
             sudo systemctl start docker
-            echo "Docker installed successfully!"
+            sudo systemctl enable docker
           else
             echo "Docker is already installed."
           fi
 
-          # Navigate or Clone the Project
-          if [ ! -d "$HOME/HR_Agent_API" ]; then
+          # Clone the repository if not exists
+          if [ ! -d "/home/$USER/HR_Agent_API" ]; then
             echo "Cloning the repository..."
-            git clone https://github.com/Ray-XXX-eee/HR_Agent_API.git $HOME/HR_Agent_API
+            git clone https://github.com/Ray-XXX-eee/HR_Agent_API.git /home/$USER/HR_Agent_API
           else
-            echo "Repository already exists. Pulling latest changes..."
-            cd $HOME/HR_Agent_API
+            echo "Repository exists. Pulling the latest changes..."
+            cd /home/$USER/HR_Agent_API
             git pull origin main
           fi
 
-          # Stop and Remove Existing Container if Needed
-          if docker ps -a --filter "name=hra-api-container" | grep "hra-api-container"; then
-            echo "Stopping and removing existing container..."
-            docker stop hra-api-container
-            docker rm hra-api-container
-          else
-            echo "No existing container found."
-          fi
+          # Stop and remove any running container
+          docker stop hra-api-container || true
+          docker rm hra-api-container || true
 
-          # Build and Run Docker Container
-          echo "Building Docker image..."
-          cd $HOME/HR_Agent_API
+          # Build and run Docker
+          cd /home/$USER/HR_Agent_API
           docker build -t hra-api-image .
-          echo "Running Docker container..."
           docker run -d -p 8000:8000 --name hra-api-container hra-api-image
+
           echo "API deployed successfully!"
         EOF
