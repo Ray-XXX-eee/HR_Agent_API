@@ -1,0 +1,30 @@
+# Ignore virtual environments
+venv/
+# .env
+*.pyc
+__pycache__/
+
+# Ignore log files
+*.log
+
+# Ignore Docker-related files
+Dockerfile
+docker-compose.yml
+
+# Ignore git and editor files
+.git/
+.gitignore
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Ignore dataset or large files if applicable
+*.csv
+*.pkl
+*.h5
+*.zip
+*.tar.gz
+
+# Ignore unnecessary directories
+node_modules/

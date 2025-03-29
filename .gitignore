@@ -1,4 +1,7 @@
 venv
+**UI
 .env
 __pycache__
 data
+UI_main.py
+RAG-DEV_credentials.csv

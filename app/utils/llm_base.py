@@ -11,6 +11,7 @@ class BaseInference:
         self.temperature = temperature
 
     def _get_llm(self):
+        ChatGroq.model_rebuild()
         return ChatGroq(model=self.model_name, temperature=self.temperature,api_key=GROQ_API_KEY)
 
     def agent_answer(self, base_prompt: str, user_prompt: str):

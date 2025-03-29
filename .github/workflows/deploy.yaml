@@ -1,0 +1,34 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Decode and Save SSH Key
+      run: |
+        echo "${{ secrets.EC2_SSH_KEY }}" | base64 --decode > private_key.pem
+        chmod 600 private_key.pem
+
+    - name: SSH into EC2 and Deploy
+      env:
+        HOST: ${{ secrets.EC2_HOST }}
+        USER: ${{ secrets.EC2_USER }}
+      run: |
+        ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
+          echo "Connected to EC2"
+          docker stop hra-api-container || true
+          docker rm hra-api-container || true
+          cd /path/to/your/project
+          git pull origin main
+          docker build -t hra-api-image .
+          docker run -d -p 8000:8000 --name hra-api-container hra-api-image
+        EOF
